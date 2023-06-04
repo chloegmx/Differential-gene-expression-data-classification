@@ -9,6 +9,8 @@ import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
 #model evaluation libraries
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -54,3 +56,27 @@ x = df.drop(columns=['Samples','target'])
 y = df["target"]
 x_train,x_test,y_train,y_test = train_test_split(x,y,test_size=0.4)
 
+#fitting data into the 5 models
+models = {"Logistic Regression":LogisticRegression(),
+          "Random Forest":RandomForestClassifier(),
+          "Adaboost":AdaBoostClassifier(),
+          "Support Vector Classifier":SVC(C = 10, gamma = 0.01),
+          "Naive Bayes":GaussianNB()}
+def fit_and_score(models,x_train,x_test,y_train,y_test):
+  np.random.seed(32)
+  model_scores= {}
+  for  name,model in models.items():
+    model.fit(x_train,y_train)
+    model_scores[name]=model.score(x_test,y_test)
+   return model_scores
+
+model_scores = fit_and_scores(models = models,
+                              x_train=x_train,
+                              x_test=x_test,
+                              y_train=y_train,
+                              y_test=y_test)
+model_scores
+
+#comparision of results from the 5 models
+model_compare = pd.DataFrame(model_scores,index=["accuracy"])
+model_compare.T.plot.bar()
